@@ -4,7 +4,7 @@ using namespace std;
 const int MAXJETONS = 64;
 
 struct Jeton {
-int couleur[1];
+char couleur[1];
 int coordonnees[2];
 };
 
@@ -41,7 +41,7 @@ void initialiseJoueur(Joueur *joueur, int n) {
     if(n==1){
         int coordonneesJeton1[2]={4,4};
         int coordonneesJeton2[2]={5,5};
-        int color = 7;
+        int color = 'B';
         ajouterJeton(&joueur->jetons[0], color, coordonneesJeton1);
         ajouterJeton(&joueur->jetons[1], color, coordonneesJeton2);
     }
@@ -64,7 +64,7 @@ void afficheJoueur(Joueur joueur) {
 }
 
 void afficheJeton(Jeton jeton) {
-    cout << "Couleur : " << jeton.couleur << endl;
+    cout << "Couleur : " << jeton.couleur[1] << endl;
 
     cout << "coordonnees : ";
     for(int i=0; i<2; i++){
@@ -83,8 +83,9 @@ int main() {
     Jeton jetonTest;
     int coorJetonTest[2]={4,4};
     // char colorJetonTest[1]={8};
-    ajouterJeton(&jetonTest, 8, coorJetonTest);
+    ajouterJeton(&jetonTest, 'B', coorJetonTest);
     afficheJeton(jetonTest);
+
 
     return 0;
 }
