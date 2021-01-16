@@ -17,7 +17,7 @@ int nbJetonsActuels;
 struct Jeu {
 Joueur *joueur1;
 Joueur *joueur2;
-int tableauPointeurJetons[8][8];
+Jeton* tableauPointeurJetons[8][8];
 };
 
 
@@ -85,26 +85,127 @@ void initialiseJeu(Jeu *jeu, Joueur *joueur1, Joueur *joueur2) {
     jeu->joueur1=joueur1;
     jeu->joueur2=joueur2;
 
-    jeu->tableauPointeurJetons;
-    // for(int i=0 ; i<8 ; i++) { 
-    //     for(int j=0 ; j<8 ; j++) { 
-    //         if(joueur->coordonnees[0]==jeu->tableauPointeurJetons[i][] && joueur->coordonnees[1]==jeu->tableauPointeurJetons[][j]){
-    //             jeu->tableauPointeurJetons[i][j]=
-    //         }
-    //         j++;
-    //     }
-    //     i++;
-    // } 
+    Joueur *joueurTotalTemp = new Joueur;
+    joueurTotalTemp->nbJetonsActuels = joueur1->nbJetonsActuels + joueur2->nbJetonsActuels;
+    // cout << joueurTotalTemp->nbJetonsActuels;
+
+    joueurTotalTemp->jetons = (Jeton*) malloc (sizeof(Jeton)*joueurTotalTemp->nbJetonsActuels);
+
+    int compteurTemp;
+    for(compteurTemp=0; compteurTemp<joueur1->nbJetonsActuels;compteurTemp++) {
+        joueurTotalTemp->jetons[compteurTemp]=joueur1->jetons[compteurTemp];
+    }
+    int compteurTempAprJ1 = compteurTemp;
+    for(compteurTemp=0; compteurTemp<joueur2->nbJetonsActuels;compteurTemp++) {
+        joueurTotalTemp->jetons[compteurTempAprJ1]=joueur2->jetons[compteurTemp];
+        compteurTempAprJ1++;
+    }
+
+    // for(int a=0; a<joueurTotalTemp->nbJetonsActuels ; a++){
+    //     cout << joueurTotalTemp->jetons[a].couleur[1] << endl;
+    // }
+
+    for(int i=1;i<=8;i++) {
+        for(int j=1;j<=8;j++) {
+            for(int k=0; k<joueurTotalTemp->nbJetonsActuels ; k++) {
+                if(i==joueurTotalTemp->jetons[k].coordonnees[0] && j==joueurTotalTemp->jetons[k].coordonnees[1]) {
+                    //si le jeton avec ces coordonnees existe, pointer sur lui
+                    jeu->tableauPointeurJetons[i][j]=&joueurTotalTemp->jetons[k];
+                    break;
+                }
+                else {
+                    jeu->tableauPointeurJetons[i][j] = NULL;
+                }
+            }
+        }
+    }
+
 }
 
 void affichePlateauJeu(Jeu *jeu) {
-    int i; 
-    for(i=0;i<8;i++) { 
+    // char couleurJeton; 
+    cout << endl << endl;
+    cout<<"    1   2   3   4   5   6   7   8  "<<endl; 
+    for(int i=1;i<=8;i++) { 
         cout<<"  +---+---+---+---+---+---+---+---+"<<endl; 
-        cout<<i+1<<" | "<<jeu->tableauPointeurJetons[i][0]<<" | "<<jeu->tableauPointeurJetons[i][1]<<" | "<<jeu->tableauPointeurJetons[i][2]<<" | "<<jeu->tableauPointeurJetons[i][3]<<" | "<<jeu->tableauPointeurJetons[i][4]<<" | "<<jeu->tableauPointeurJetons[i][5]<<" | "<<jeu->tableauPointeurJetons[i][6]<<" | "<<jeu->tableauPointeurJetons[i][7]<<" |"<<endl; 
+        cout<<i<<" | ";
+        for(int j=1;j<=8;j++) {
+            if(jeu->tableauPointeurJetons[i][j]==NULL){
+                cout<<" "<<" | ";
+            }
+            else {
+                // cout<<jeu->tableauPointeurJetons[i][j]->couleur[1]<<" | ";
+                cout<<jeu->tableauPointeurJetons[i][j]->couleur[1]<<" | ";
+            }
+        }
+        cout<<endl; 
     } 
     cout<<"  +---+---+---+---+---+---+---+---+"<<endl; 
-    cout<<"    A   B   C   D   E   F   G   H  "<<endl; 
+
+    // cout << jeu->tableauPointeurJetons[4][4]<<endl;
+    // cout << jeu->tableauPointeurJetons[4][4]->couleur[1]<<endl;
+}
+
+// void isJetonAdverseAlentour(Jeu *jeu, int coordonneesJeton) {
+// }
+
+void jouerTour(Jeu *jeu, Joueur *joueur) {
+    int rowNewJeton, columnNewJeton;
+
+    char couleurJoueurAdverse[1];
+    if(joueur->jetons[0].couleur[1]=='B'){
+        couleurJoueurAdverse[1] = 'W';
+    }
+    else{
+        couleurJoueurAdverse[1] = 'B';
+    }
+
+    cout << couleurJoueurAdverse[1];
+
+
+    cout << "C'est au tour de " << joueur->nom <<endl;
+    cout << "quelle case voulez vous prendre ?" << endl;
+    cout << "ligne : ";
+    cin >> rowNewJeton;
+
+    cout << "colonne : ";
+    cin >> columnNewJeton;
+
+    // cout << coordonneesNewJeton[0]-1;
+
+    int nbJetonAdverseAlentour = 0;
+
+    cout << columnNewJeton;
+
+    cout << jeu->tableauPointeurJetons[4][5]->couleur[1];
+    cout << couleurJoueurAdverse[1];
+
+    if (jeu->tableauPointeurJetons[4][5]->couleur[1]==couleurJoueurAdverse[1]){
+        cout << endl << "ca marche" << endl;
+    }
+
+    for(int i=rowNewJeton-1;i<=rowNewJeton+1;i++) {
+        for(int j=columnNewJeton-1;j<=columnNewJeton+1;j++) {
+            if(jeu->tableauPointeurJetons[i][j]!=NULL) {
+                if(jeu->tableauPointeurJetons[i][j]->couleur[1]==couleurJoueurAdverse[1]) {
+                    nbJetonAdverseAlentour++;
+                    break;
+                }
+            }
+            cout << i << " " << j << " ; ";
+        }
+    }
+
+    cout << nbJetonAdverseAlentour;
+
+    if(nbJetonAdverseAlentour>=1) {
+        cout << "le coup peut etre joue" << endl;
+    }
+    else {
+        cout << "vous ne pouvez pas jouer ce coup, il n'y a aucun jeton adverse aux alentours" << endl;
+    }
+
+    
 }
 
 int main() {
@@ -118,13 +219,10 @@ int main() {
     initialiseJoueur(&joueur2,2);
     afficheJoueur(joueur2);
 
+    initialiseJeu(&plateauJeuTest, &joueur1, &joueur2);
     affichePlateauJeu(&plateauJeuTest);
 
-    // Jeton jetonTest;
-    // int coorJetonTest[2]={4,4};
-    // ajouterJeton(&jetonTest, 'B', coorJetonTest);
-    // afficheJeton(jetonTest);
-
+    jouerTour(&plateauJeuTest, &joueur1);
 
     return 0;
 }
