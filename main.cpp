@@ -21,9 +21,6 @@ Jeton* tableauPointeurJetons[8][8];
 };
 
 
-void ajouterJeton(Jeton *jeton, char color, int coordonnees[2]);
-void afficheJeton(Jeton jeton);
-
 void initialiseJoueur(Joueur *joueur, int n) {
     cout << "Joueur " << n << endl;
     cout << "Entrez le nom du joueur : ";
@@ -36,6 +33,7 @@ void afficheJoueur(Joueur *joueur) {
     cout << joueur->nom << " possede " << joueur->nbJetonsActuels << " jetons " << endl;
 }
 
+//initialise le jeu
 void initialiseJeu(Jeu *jeu, Joueur *joueur1, Joueur *joueur2) {
 
     jeu->joueur1=joueur1;
@@ -82,6 +80,7 @@ void affichePlateauJeu(Jeu *jeu) {
     cout<<"  +---+---+---+---+---+---+---+---+"<<endl << endl; 
 }
 
+//vérifie que la case que l'utilisateur veut prendre est bien disponible et pas déjà occupée par un autre pion
 bool possibleJouerTourCaseDispo(Jeu *jeu, Joueur *joueur, int rowNewJeton, int columnNewJeton){
     if (jeu->tableauPointeurJetons[rowNewJeton][columnNewJeton]->couleur!=' '){
         cout << "vous ne pouvez pas jouer ce coup, la case est deja prise" << endl;
@@ -92,6 +91,7 @@ bool possibleJouerTourCaseDispo(Jeu *jeu, Joueur *joueur, int rowNewJeton, int c
     }
 }
 
+//Vérifie que le pion est bien à côté d'un pion adverse
 bool possibleJouerTourCondition1(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, int rowNewJeton, int columnNewJeton) {
 
         int nbJetonAdverseAlentour = 0;
@@ -122,6 +122,7 @@ bool possibleJouerTourCondition1(Jeu *jeu, Joueur *joueur, char couleurJoueurAdv
         }
 }
 
+//Récupère la ligne où l'utilisateur veut poser son pion, et vérifie que c'est une case qui existe
 int getLigne(){
     bool vrai = true;
     int rowNewJeton;
@@ -142,6 +143,7 @@ int getLigne(){
     return rowNewJeton;
 }
 
+//Récupère la colonne où l'utilisateur veut poser son pion, et vérifie que c'est une case qui existe
 int getColonne(){
     bool vrai = true;
     int columnNewJeton;
@@ -190,9 +192,9 @@ bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
             jeu->tableauPointeurJetons[ligne][colonne]->couleur=couleurJoueur;
             joueur->nbJetonsActuels++;
             joueur->jetons--;
-            cout << joueurCourant << endl;
+            // cout << joueurCourant << endl;
             joueurCourant=!joueurCourant;
-            cout << joueurCourant << endl;
+            // cout << joueurCourant << endl;
 
             afficheJoueur(jeu->joueur1);
             afficheJoueur(jeu->joueur2);
