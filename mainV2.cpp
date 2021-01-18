@@ -141,7 +141,7 @@ bool possibleJouerTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, int 
     }
 }
 
-int placerJetonTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
+void placerJetonTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
 
     char couleurJoueurAdverse, couleurJoueur;
     if(joueurCourant == true){
@@ -177,11 +177,8 @@ int placerJetonTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
         cout << endl << joueurCourant << endl;
     }
     else if (possibleOuPas == false) {
-        // placerJetonTour(jeu, joueur, joueurCourant);
-        return 1;
+        placerJetonTour(jeu, joueur, joueurCourant);
     }
-
-    return 0;
 }
 
 void PartieDeJeu(Jeu *jeu) {
@@ -190,21 +187,12 @@ void PartieDeJeu(Jeu *jeu) {
 
     while (nbJetonsPoses>0) {
         if(joueurCourant==true){
-            if(placerJetonTour(jeu, jeu->joueur1, joueurCourant)==1){
-                placerJetonTour(jeu, jeu->joueur1, joueurCourant);
-            }
-            else{
-                joueurCourant=!joueurCourant;
-            }
+            placerJetonTour(jeu, jeu->joueur1, joueurCourant);
+            joueurCourant=!joueurCourant;
         }
         else{
-            if(placerJetonTour(jeu, jeu->joueur2, joueurCourant)==1){
-                placerJetonTour(jeu, jeu->joueur2, joueurCourant);
-            }
-            else {
-                joueurCourant=!joueurCourant;
-            }
-            
+            placerJetonTour(jeu, jeu->joueur2, joueurCourant);
+            joueurCourant=!joueurCourant;
         }
         affichePlateauJeu(jeu);
     }
