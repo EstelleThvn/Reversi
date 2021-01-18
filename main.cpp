@@ -82,13 +82,18 @@ void affichePlateauJeu(Jeu *jeu) {
     cout<<"  +---+---+---+---+---+---+---+---+"<<endl << endl; 
 }
 
-bool possibleJouerTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, int rowNewJeton, int columnNewJeton) {
-
+bool possibleJouerTourCaseDispo(Jeu *jeu, Joueur *joueur, int rowNewJeton, int columnNewJeton){
     if (jeu->tableauPointeurJetons[rowNewJeton][columnNewJeton]->couleur!=' '){
         cout << "vous ne pouvez pas jouer ce coup, la case est deja prise" << endl;
         return false;
     }
-    else {
+    else{
+        return true;
+    }
+}
+
+bool possibleJouerTourCondition1(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, int rowNewJeton, int columnNewJeton) {
+
         int nbJetonAdverseAlentour = 0;
 
         for(int i=rowNewJeton-1;i<=rowNewJeton+1;i++) {
@@ -108,14 +113,13 @@ bool possibleJouerTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, int 
         // cout << nbJetonAdverseAlentour;
 
         if(nbJetonAdverseAlentour>=1) {
-            cout << "le coup peut etre joue" << endl;
+            // cout << "le coup peut etre joue" << endl;
             return true;
         }
         else {
             cout << "vous ne pouvez pas jouer ce coup, il n'y a aucun jeton adverse aux alentours" << endl;
             return false;
         }
-    }
 }
 
 int getLigne(){
@@ -127,11 +131,9 @@ int getLigne(){
 
         if (rowNewJeton>=1 && rowNewJeton<=8) {
             vrai = false;
-            cout << rowNewJeton << endl;
         }
         else {
-            cout << "valeur incorrecte reessayez" << endl;
-            cout << rowNewJeton << endl;
+            cout << "valeur incorrecte reessayez, rentrez un nombre entre 1 et 8" << endl;
             cin.clear();
             fflush(stdin);
         }
@@ -151,7 +153,7 @@ int getColonne(){
             vrai = false;
         }
         else {
-            cout << "valeur incorrecte reessayez" << endl;
+            cout << "valeur incorrecte, rentrez un nombre entre 1 et 8" << endl;
             cin.clear();
             fflush(stdin);
         }
@@ -160,7 +162,8 @@ int getColonne(){
     return columnNewJeton;
 }
 
-bool placerJetonTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
+//on pose un jeton et on alterne le joueur si toutes les conditions sont réunis, sinon on ne fait rien et on alterne pas de joueur
+bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
 
     char couleurJoueurAdverse, couleurJoueur;
     if(joueurCourant == true){
@@ -172,23 +175,29 @@ bool placerJetonTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
         couleurJoueur = 'B';
     }
 
-    cout << "C'est au tour de " << joueur->nom <<endl;
+    cout << "C'est au tour de " << joueur->nom << " (jetons " << couleurJoueur << ")" << endl;
     cout << "quelle case voulez vous prendre ?" << endl;
 
     int ligne = getLigne();
     int colonne = getColonne();
 
 
-    bool possibleOuPas = possibleJouerTour(jeu, joueur, couleurJoueurAdverse, ligne, colonne);
-    if (possibleOuPas == true) {
-        // cout << "il faut placer le jeton !" << endl;
-        jeu->tableauPointeurJetons[ligne][colonne]->couleur=couleurJoueur;
-        joueur->nbJetonsActuels++;
-        joueur->jetons--;
-        cout << joueurCourant << endl;
-        joueurCourant=!joueurCourant;
-        cout << joueurCourant << endl;
-        // cout << endl << joueurCourant << endl;
+    bool PoseJetonPossibleOuPas = possibleJouerTourCaseDispo(jeu, joueur, ligne, colonne);
+    if(PoseJetonPossibleOuPas == true){
+        PoseJetonPossibleOuPas = possibleJouerTourCondition1(jeu, joueur, couleurJoueurAdverse, ligne, colonne);
+
+        if(PoseJetonPossibleOuPas == true) {
+            jeu->tableauPointeurJetons[ligne][colonne]->couleur=couleurJoueur;
+            joueur->nbJetonsActuels++;
+            joueur->jetons--;
+            cout << joueurCourant << endl;
+            joueurCourant=!joueurCourant;
+            cout << joueurCourant << endl;
+
+            afficheJoueur(jeu->joueur1);
+            afficheJoueur(jeu->joueur2);
+            affichePlateauJeu(jeu);
+        }
     }
 
     return joueurCourant;
@@ -200,14 +209,12 @@ void PartieDeJeu(Jeu *jeu) {
 
     while (nbJetonsPoses>0) {
         if(joueurCourant==true){
-            joueurCourant = placerJetonTour(jeu, jeu->joueur1, joueurCourant);
+            joueurCourant = jouerUnTour(jeu, jeu->joueur1, joueurCourant);
         }
         else{
-            joueurCourant = placerJetonTour(jeu, jeu->joueur2, joueurCourant);
+            joueurCourant = jouerUnTour(jeu, jeu->joueur2, joueurCourant);
         }
-        afficheJoueur(jeu->joueur1);
-        afficheJoueur(jeu->joueur2);
-        affichePlateauJeu(jeu);
+        
     }
 
 }
@@ -225,19 +232,9 @@ int main() {
     afficheJoueur(joueur2);
 
     initialiseJeu(plateauJeuTest, joueur1, joueur2);
-    // cout << plateauJeuTest->tableauPointeurJetons[4][4]->couleur;
     affichePlateauJeu(plateauJeuTest);
-
-    // placerJetonTour(plateauJeuTest, plateauJeuTest->joueur1, moduloAlternanceJoueur);
 
     PartieDeJeu(plateauJeuTest);
 
-    // afficheJoueur(joueur2);
-
-    // afficheJoueur(joueur1);
-
     return 0;
 }
-
-    
-    
