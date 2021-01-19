@@ -275,8 +275,144 @@ int getColonne(){
 }
 
 //capture les jetons de l'adversaire quand toutes les conditions sont remplis
-void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, int rowNewJeton, int columnNewJeton){
+void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, int rowNewJeton, int columnNewJeton, bool joueurCourant){
+    int i = rowNewJeton;
+    int j = columnNewJeton;
+    int nbDeplacementDirection = 0;
 
+    bool continuerDeplacement = true;
+
+    bool cestPossible = false;
+
+    // cout << continuerDeplacement << endl;
+
+    // cout << i << j << jeu->tableauPointeurJetons[i+1][j]->couleur << couleurJoueurAdverse << endl;
+
+    int changementDirection = 0;
+
+    //ordre des directions :
+    // droite
+    // gauche
+    // bas
+    // haut
+    // bas droite
+    // bas gauche
+    // haut droite
+    // haut gauche
+    int infosDirections[8][2]={
+        {0,1},
+        {0,-1},
+        {1,0},
+        {-1,0},
+        {1,1},
+        {1,-1},
+        {-1,1},
+        {-1,-1},
+
+    };
+
+    while(changementDirection<8){
+        while(j>=1 && j<=8 && i>=1 && i<=8 && continuerDeplacement == true){
+
+            nbDeplacementDirection++;
+
+            i = i+infosDirections[changementDirection][0];
+            j = j+infosDirections[changementDirection][1];
+            
+            //si on se retrouve avec des i ou j égaux à 0 ou à 9, c'est que c'est pas la bonne direction du tableau, donc on sort du while et on change de direction 
+            if(i==0 || i==9 || j==0 || j==9){
+                break;
+            }
+
+            cout << "direction : " << changementDirection << endl;
+            cout << "i : " << i << endl;
+            cout << "j : " << j << endl;
+            cout << nbDeplacementDirection << endl;
+            
+
+            if(nbDeplacementDirection == 1){
+                if(jeu->tableauPointeurJetons[i][j]->couleur==couleurJoueurAdverse){
+                    continuerDeplacement = true;
+                }
+                else{
+                    continuerDeplacement = false;
+                }
+            }
+            else{
+                if(jeu->tableauPointeurJetons[i][j]->couleur==couleurJoueurAdverse){
+                    continuerDeplacement = true;
+                }
+                else if(jeu->tableauPointeurJetons[i][j]->couleur==couleurJoueur){
+                    cestPossible = true;
+                    continuerDeplacement = false;
+                }
+                else{
+                    continuerDeplacement = false;
+                }
+            }
+
+            if(infosDirections[changementDirection][0]==1){
+                if(i==8){
+                    continuerDeplacement = false;
+                }
+            }
+            else if(infosDirections[changementDirection][0]==-1){
+                if(i==1){
+                    continuerDeplacement = false;
+                }
+            }
+            if(infosDirections[changementDirection][1]==1){
+                if(j==8){
+                    continuerDeplacement = false;
+                }
+            }
+            else if(infosDirections[changementDirection][0]==-1){
+                if(j==1){
+                    continuerDeplacement = false;
+                }
+            }
+
+        }
+
+        i = rowNewJeton;
+        j = columnNewJeton;
+
+        if(cestPossible == true){
+            cout << "direction de la capture : " << changementDirection << endl;
+
+            i = i+infosDirections[changementDirection][0];
+            j = j+infosDirections[changementDirection][1];
+
+            while(jeu->tableauPointeurJetons[i][j]->couleur==couleurJoueurAdverse){
+                jeu->tableauPointeurJetons[i][j]->couleur=couleurJoueur;
+                joueur->jetons--;
+                joueur->nbJetonsActuels++;
+                if(joueurCourant == true){
+                    jeu->joueur2->nbJetonsActuels--;
+                    jeu->joueur2->jetons++;
+                }
+                else{
+                    jeu->joueur1->nbJetonsActuels--;
+                    jeu->joueur1->jetons++;
+                }
+
+                i = i+infosDirections[changementDirection][0];
+                j = j+infosDirections[changementDirection][1];
+            }
+        }
+
+        changementDirection++;
+        nbDeplacementDirection = 0;
+        continuerDeplacement = true;
+        cestPossible = false;
+        // cout << "direction apres changement : " << changementDirection << endl;
+        // cout << "cest possible : " << cestPossible << endl;
+        // cout << "i : " << i << endl;
+        // cout << "j : " << j << endl;
+        // cout << nbDeplacementDirection << endl;
+        // cout << "continuer deplacement : " << continuerDeplacement << endl;
+
+    }
 }
 
 //on pose un jeton et on alterne le joueur si toutes les conditions sont réunis, sinon on ne fait rien et on alterne pas de joueur
@@ -300,6 +436,7 @@ bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
 
 
     bool PoseJetonPossibleOuPas = possibleJouerTourCaseDispo(jeu, joueur, ligne, colonne);
+
     if(PoseJetonPossibleOuPas == true){
         PoseJetonPossibleOuPas = possibleJouerTourCondition1(jeu, joueur, couleurJoueurAdverse, ligne, colonne);
 
@@ -310,6 +447,9 @@ bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
                 jeu->tableauPointeurJetons[ligne][colonne]->couleur=couleurJoueur;
                 joueur->nbJetonsActuels++;
                 joueur->jetons--;
+
+                capturePionsAdverses(jeu, joueur, couleurJoueurAdverse, couleurJoueur, ligne, colonne, joueurCourant);
+
                 // cout << joueurCourant << endl;
                 joueurCourant=!joueurCourant;
                 // cout << joueurCourant << endl;
