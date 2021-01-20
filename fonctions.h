@@ -32,5 +32,7 @@ bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant);
 void PartieDeJeu(Jeu *jeu);
 bool possibleJouerTourCondition2(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, int rowNewJeton, int columnNewJeton);
 void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, int rowNewJeton, int columnNewJeton, bool joueurCourant);
+void finDePartie(Jeu *jeu);
+bool casesDisposTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, bool joueurCourant);
 
 #endif /* FONCTIONS_H */

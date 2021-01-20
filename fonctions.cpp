@@ -64,7 +64,6 @@ void affichePlateauJeu(Jeu *jeu) {
 //vérifie que la case que l'utilisateur veut prendre est bien disponible et pas déjà occupée par un autre pion
 bool possibleJouerTourCaseDispo(Jeu *jeu, Joueur *joueur, int rowNewJeton, int columnNewJeton){
     if (jeu->tableauPointeurJetons[rowNewJeton][columnNewJeton]->couleur!=' '){
-        cout << "vous ne pouvez pas jouer ce coup, la case est deja prise" << endl;
         return false;
     }
     else{
@@ -98,7 +97,6 @@ bool possibleJouerTourCondition1(Jeu *jeu, Joueur *joueur, char couleurJoueurAdv
             return true;
         }
         else {
-            cout << "vous ne pouvez pas jouer ce coup, il n'y a aucun jeton adverse aux alentours" << endl;
             return false;
         }
 }
@@ -155,10 +153,10 @@ bool possibleJouerTourCondition2(Jeu *jeu, Joueur *joueur, char couleurJoueurAdv
                 break;
             }
 
-            cout << "direction : " << changementDirection << endl;
-            cout << "i : " << i << endl;
-            cout << "j : " << j << endl;
-            cout << nbDeplacementDirection << endl;
+            // cout << "direction : " << changementDirection << endl;
+            // cout << "i : " << i << endl;
+            // cout << "j : " << j << endl;
+            // cout << nbDeplacementDirection << endl;
             
 
             if(nbDeplacementDirection == 1){
@@ -197,7 +195,7 @@ bool possibleJouerTourCondition2(Jeu *jeu, Joueur *joueur, char couleurJoueurAdv
                     continuerDeplacement = false;
                 }
             }
-            else if(infosDirections[changementDirection][0]==-1){
+            else if(infosDirections[changementDirection][1]==-1){
                 if(j==1){
                     continuerDeplacement = false;
                 }
@@ -205,9 +203,9 @@ bool possibleJouerTourCondition2(Jeu *jeu, Joueur *joueur, char couleurJoueurAdv
 
         }
 
-        if(cestPossible == true){
-            cout << "direction de la capture : " << changementDirection << endl;
-        }
+        // if(cestPossible == true){
+        //     cout << "direction de la capture : " << changementDirection << endl;
+        // }
 
         changementDirection++;
         nbDeplacementDirection = 0;
@@ -227,7 +225,6 @@ bool possibleJouerTourCondition2(Jeu *jeu, Joueur *joueur, char couleurJoueurAdv
         return true;
     }
     else {
-        cout << "vous ne pouvez pas jouer ce coup, vous ne pouvez pas capturer de pion adverse" << endl;
         return false;
     }
 }
@@ -366,7 +363,7 @@ void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, c
                     continuerDeplacement = false;
                 }
             }
-            else if(infosDirections[changementDirection][0]==-1){
+            else if(infosDirections[changementDirection][1]==-1){
                 if(j==1){
                     continuerDeplacement = false;
                 }
@@ -401,6 +398,8 @@ void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, c
             }
         }
 
+        i = rowNewJeton;
+        j = columnNewJeton;
         changementDirection++;
         nbDeplacementDirection = 0;
         continuerDeplacement = true;
@@ -429,54 +428,138 @@ bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
     }
 
     cout << "C'est au tour de " << joueur->nom << " (jetons " << couleurJoueur << ")" << endl;
-    cout << "quelle case voulez vous prendre ?" << endl;
 
-    int ligne = getLigne();
-    int colonne = getColonne();
+    //assistance : afficher les cases jouables par le joueur courant s'il y en a, sinon finir le tour
+    bool tourJoueurValide = casesDisposTour(jeu, joueur, couleurJoueurAdverse, couleurJoueur, joueurCourant);
+
+    cout << "est-ce que le tour est valide : " << tourJoueurValide << endl;
+
+    if(tourJoueurValide == false){
+        cout << "vous n'avez aucun coup possible, vous devez passer votre tour " << joueur->nom << endl;
+
+        joueurCourant=!joueurCourant;
+    }
+    else{
+        affichePlateauJeu(jeu);
+
+        cout << "quelle case voulez vous prendre ?" << endl;
+
+        int ligne = getLigne();
+        int colonne = getColonne();
 
 
-    bool PoseJetonPossibleOuPas = possibleJouerTourCaseDispo(jeu, joueur, ligne, colonne);
+        bool PoseJetonPossibleOuPas = possibleJouerTourCaseDispo(jeu, joueur, ligne, colonne);
 
-    if(PoseJetonPossibleOuPas == true){
-        PoseJetonPossibleOuPas = possibleJouerTourCondition1(jeu, joueur, couleurJoueurAdverse, ligne, colonne);
+        if(PoseJetonPossibleOuPas == true){
+            PoseJetonPossibleOuPas = possibleJouerTourCondition1(jeu, joueur, couleurJoueurAdverse, ligne, colonne);
 
-        if(PoseJetonPossibleOuPas == true) {
-            PoseJetonPossibleOuPas = possibleJouerTourCondition2(jeu, joueur, couleurJoueurAdverse, couleurJoueur, ligne, colonne);
+            if(PoseJetonPossibleOuPas == true) {
+                PoseJetonPossibleOuPas = possibleJouerTourCondition2(jeu, joueur, couleurJoueurAdverse, couleurJoueur, ligne, colonne);
 
-            if(PoseJetonPossibleOuPas == true){
-                jeu->tableauPointeurJetons[ligne][colonne]->couleur=couleurJoueur;
-                joueur->nbJetonsActuels++;
-                joueur->jetons--;
+                if(PoseJetonPossibleOuPas == true){
+                    jeu->tableauPointeurJetons[ligne][colonne]->couleur=couleurJoueur;
+                    joueur->nbJetonsActuels++;
+                    joueur->jetons--;
 
-                capturePionsAdverses(jeu, joueur, couleurJoueurAdverse, couleurJoueur, ligne, colonne, joueurCourant);
+                    capturePionsAdverses(jeu, joueur, couleurJoueurAdverse, couleurJoueur, ligne, colonne, joueurCourant);
 
-                // cout << joueurCourant << endl;
-                joueurCourant=!joueurCourant;
-                // cout << joueurCourant << endl;
+                    // cout << joueurCourant << endl;
+                    joueurCourant=!joueurCourant;
+                    // cout << joueurCourant << endl;
 
-                afficheJoueur(jeu->joueur1);
-                afficheJoueur(jeu->joueur2);
-                affichePlateauJeu(jeu);
+                    afficheJoueur(jeu->joueur1);
+                    afficheJoueur(jeu->joueur2);
+                    affichePlateauJeu(jeu);
 
+                }
+                else{
+                    cout << "vous ne pouvez pas jouer ce coup, vous ne pouvez pas capturer de pion adverse" << endl;
+                }
+            }
+            else {
+                cout << "vous ne pouvez pas jouer ce coup, il n'y a aucun jeton adverse aux alentours" << endl;
             }
         }
+        else{
+            cout << "vous ne pouvez pas jouer ce coup, la case est deja prise" << endl;
+        }
+
     }
 
     return joueurCourant;
 }
 
+void finDePartie(Jeu *jeu){
+    cout << "La partie est finie !" << endl;
+
+    if(jeu->joueur1->nbJetonsActuels > jeu->joueur2->nbJetonsActuels){
+        cout << jeu->joueur1->nom << " a gagne ! :)" << endl;
+    }
+    else if(jeu->joueur2->nbJetonsActuels > jeu->joueur1->nbJetonsActuels){
+        cout << jeu->joueur2->nom << " a gagne ! :)" << endl;
+    }
+    else if(jeu->joueur2->nbJetonsActuels == jeu->joueur1->nbJetonsActuels){
+        cout << jeu->joueur1->nom << " et " << jeu->joueur2->nom << " ont le meme nombre de points ! Ex aequo :)" << endl;
+    }
+
+    cout << "SCORE : " << endl;
+    cout << jeu->joueur1->nom << " : " << jeu->joueur1->nbJetonsActuels << " jetons" << endl;
+    cout << jeu->joueur2->nom << " : " << jeu->joueur2->nbJetonsActuels << " jetons" << endl;
+}
+
 void PartieDeJeu(Jeu *jeu) {
     bool joueurCourant = true;
-    int nbJetonsPoses = jeu->joueur1->jetons+jeu->joueur2->jetons;
+    int nbJetonsPoses = jeu->joueur1->nbJetonsActuels + jeu->joueur2->nbJetonsActuels;
 
-    while (nbJetonsPoses>0) {
+    while (nbJetonsPoses<64) {
         if(joueurCourant==true){
             joueurCourant = jouerUnTour(jeu, jeu->joueur1, joueurCourant);
         }
         else{
             joueurCourant = jouerUnTour(jeu, jeu->joueur2, joueurCourant);
         }
+
+        nbJetonsPoses = jeu->joueur1->nbJetonsActuels + jeu->joueur2->nbJetonsActuels;
         
+        cout << endl << jeu->joueur1->nbJetonsActuels << endl;
+        cout << endl << jeu->joueur2->nbJetonsActuels << endl;
+        cout << endl << "jetons sur le plateau : " << nbJetonsPoses << endl << endl;
     }
 
+    finDePartie(jeu);
+
+}
+
+bool casesDisposTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, bool joueurCourant){
+
+    bool CaseDispoExiste = false;
+
+    cout << "CASES JOUABLES : " << endl;
+
+    for(int i=1;i<=8;i++) {
+        for(int j=1;j<=8;j++) {
+            bool PoseJetonPossibleOuPas = possibleJouerTourCaseDispo(jeu, joueur, i, j);
+
+            if(PoseJetonPossibleOuPas == true){
+                PoseJetonPossibleOuPas = possibleJouerTourCondition1(jeu, joueur, couleurJoueurAdverse, i, j);
+
+                if(PoseJetonPossibleOuPas == true) {
+                    PoseJetonPossibleOuPas = possibleJouerTourCondition2(jeu, joueur, couleurJoueurAdverse, couleurJoueur, i, j);
+
+                    if(PoseJetonPossibleOuPas == true){
+                        
+                        // cout << "IL FAUT MODIFIER LA COULEUR DE LA CASE " << i << j << endl;
+                        // jeu->tableauPointeurJetons[i][j]->couleur='.';
+
+                        cout << i << " ; " << j << endl;
+
+
+                        CaseDispoExiste = true;
+                    }
+                }
+            }
+        }
+    }
+
+    return CaseDispoExiste;
 }
