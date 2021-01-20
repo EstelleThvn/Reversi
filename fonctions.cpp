@@ -63,11 +63,17 @@ void affichePlateauJeu(Jeu *jeu) {
 
 //vérifie que la case que l'utilisateur veut prendre est bien disponible et pas déjà occupée par un autre pion
 bool possibleJouerTourCaseDispo(Jeu *jeu, Joueur *joueur, int rowNewJeton, int columnNewJeton){
-    if (jeu->tableauPointeurJetons[rowNewJeton][columnNewJeton]->couleur!=' '){
-        return false;
+    // if (jeu->tableauPointeurJetons[rowNewJeton][columnNewJeton]->couleur!=' '){
+    //     return false;
+    // }
+    // else{
+    //     return true;
+    // }
+    if (jeu->tableauPointeurJetons[rowNewJeton][columnNewJeton]->couleur==' ' || jeu->tableauPointeurJetons[rowNewJeton][columnNewJeton]->couleur=='.'){
+        return true;
     }
     else{
-        return true;
+        return false;
     }
 }
 
@@ -486,6 +492,14 @@ bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
 
     }
 
+    for(int i=1;i<=8;i++) {
+        for(int j=1;j<=8;j++) {
+            if(jeu->tableauPointeurJetons[i][j]->couleur=='.'){
+                jeu->tableauPointeurJetons[i][j]->couleur = ' ';
+            } 
+        }
+    }
+
     return joueurCourant;
 }
 
@@ -510,6 +524,7 @@ void finDePartie(Jeu *jeu){
 void PartieDeJeu(Jeu *jeu) {
     bool joueurCourant = true;
     int nbJetonsPoses = jeu->joueur1->nbJetonsActuels + jeu->joueur2->nbJetonsActuels;
+    // int nbToursLoupesConsecutifs = 0;
 
     while (nbJetonsPoses<64) {
         if(joueurCourant==true){
@@ -524,6 +539,8 @@ void PartieDeJeu(Jeu *jeu) {
         cout << endl << jeu->joueur1->nbJetonsActuels << endl;
         cout << endl << jeu->joueur2->nbJetonsActuels << endl;
         cout << endl << "jetons sur le plateau : " << nbJetonsPoses << endl << endl;
+
+        // cout << endl << nbToursLoupesConsecutifs << endl;
     }
 
     finDePartie(jeu);
@@ -534,7 +551,7 @@ bool casesDisposTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char c
 
     bool CaseDispoExiste = false;
 
-    cout << "CASES JOUABLES : " << endl;
+    // cout << "CASES JOUABLES : " << endl;
 
     for(int i=1;i<=8;i++) {
         for(int j=1;j<=8;j++) {
@@ -548,10 +565,10 @@ bool casesDisposTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char c
 
                     if(PoseJetonPossibleOuPas == true){
                         
-                        // cout << "IL FAUT MODIFIER LA COULEUR DE LA CASE " << i << j << endl;
-                        // jeu->tableauPointeurJetons[i][j]->couleur='.';
+                        cout << "IL FAUT MODIFIER LA COULEUR DE LA CASE " << i << j << endl;
+                        jeu->tableauPointeurJetons[i][j]->couleur='.';
 
-                        cout << i << " ; " << j << endl;
+                        // cout << i << " ; " << j << endl;
 
 
                         CaseDispoExiste = true;
