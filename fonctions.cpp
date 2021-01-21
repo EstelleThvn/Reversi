@@ -11,7 +11,7 @@ void initialiseJoueur(Joueur *joueur, int n) {
 }
 
 void afficheJoueur(Joueur *joueur) {
-    cout << joueur->nom << " possede " << joueur->nbJetonsActuels << " jetons " << endl;
+    cout << joueur->nom << " possede " << joueur->nbJetonsActuels << " jetons " << endl << endl;
 }
 
 //initialise le jeu
@@ -247,7 +247,7 @@ int getLigne(){
             vrai = false;
         }
         else {
-            cout << "valeur incorrecte reessayez, rentrez un nombre entre 1 et 8" << endl;
+            cout << "Valeur incorrecte, rentrez un nombre entre 1 et 8" << endl;
             cin.clear();
             fflush(stdin);
         }
@@ -268,7 +268,7 @@ int getColonne(){
             vrai = false;
         }
         else {
-            cout << "valeur incorrecte, rentrez un nombre entre 1 et 8" << endl;
+            cout << "Valeur incorrecte, rentrez un nombre entre 1 et 8" << endl;
             cin.clear();
             fflush(stdin);
         }
@@ -327,10 +327,10 @@ void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, c
                 break;
             }
 
-            cout << "direction : " << changementDirection << endl;
-            cout << "i : " << i << endl;
-            cout << "j : " << j << endl;
-            cout << nbDeplacementDirection << endl;
+            // cout << "direction : " << changementDirection << endl;
+            // cout << "i : " << i << endl;
+            // cout << "j : " << j << endl;
+            // cout << nbDeplacementDirection << endl;
             
 
             if(nbDeplacementDirection == 1){
@@ -381,7 +381,7 @@ void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, c
         j = columnNewJeton;
 
         if(cestPossible == true){
-            cout << "direction de la capture : " << changementDirection << endl;
+            // cout << "direction de la capture : " << changementDirection << endl;
 
             i = i+infosDirections[changementDirection][0];
             j = j+infosDirections[changementDirection][1];
@@ -421,7 +421,7 @@ void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, c
 }
 
 //on pose un jeton et on alterne le joueur si toutes les conditions sont réunis, sinon on ne fait rien et on alterne pas de joueur
-bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
+bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant, int* nbToursLoupesConsecutifs) {
 
     char couleurJoueurAdverse, couleurJoueur;
     if(joueurCourant == true){
@@ -433,22 +433,25 @@ bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
         couleurJoueur = 'B';
     }
 
-    cout << "C'est au tour de " << joueur->nom << " (jetons " << couleurJoueur << ")" << endl;
+    cout << endl << "C'est au tour de " << joueur->nom << " (jetons " << couleurJoueur << ")" << endl;
 
     //assistance : afficher les cases jouables par le joueur courant s'il y en a, sinon finir le tour
     bool tourJoueurValide = casesDisposTour(jeu, joueur, couleurJoueurAdverse, couleurJoueur, joueurCourant);
 
-    cout << "est-ce que le tour est valide : " << tourJoueurValide << endl;
+    // cout << "est-ce que le tour est valide : " << tourJoueurValide << endl;
 
     if(tourJoueurValide == false){
-        cout << "vous n'avez aucun coup possible, vous devez passer votre tour " << joueur->nom << endl;
+        cout << "Vous n'avez aucun coup possible, vous devez passer votre tour " << joueur->nom << endl;
+
+        // cout << endl << "NB TOUR CONSEC : " << *nbToursLoupesConsecutifs << endl;
+        *nbToursLoupesConsecutifs = *nbToursLoupesConsecutifs+1;
 
         joueurCourant=!joueurCourant;
     }
     else{
         affichePlateauJeu(jeu);
 
-        cout << "quelle case voulez vous prendre ?" << endl;
+        cout << "Quelle case voulez-vous prendre ?" << endl;
 
         int ligne = getLigne();
         int colonne = getColonne();
@@ -469,25 +472,27 @@ bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
 
                     capturePionsAdverses(jeu, joueur, couleurJoueurAdverse, couleurJoueur, ligne, colonne, joueurCourant);
 
-                    // cout << joueurCourant << endl;
-                    joueurCourant=!joueurCourant;
-                    // cout << joueurCourant << endl;
 
+                    joueurCourant=!joueurCourant;
+                    *nbToursLoupesConsecutifs = 0;
+
+
+                    cout << endl;
                     afficheJoueur(jeu->joueur1);
                     afficheJoueur(jeu->joueur2);
-                    affichePlateauJeu(jeu);
+                    // affichePlateauJeu(jeu);
 
                 }
                 else{
-                    cout << "vous ne pouvez pas jouer ce coup, vous ne pouvez pas capturer de pion adverse" << endl;
+                    cout << "Vous ne pouvez pas jouer ce coup, vous ne pouvez pas capturer de pion adverse" << endl;
                 }
             }
             else {
-                cout << "vous ne pouvez pas jouer ce coup, il n'y a aucun jeton adverse aux alentours" << endl;
+                cout << "Vous ne pouvez pas jouer ce coup, il n'y a aucun jeton adverse aux alentours" << endl;
             }
         }
         else{
-            cout << "vous ne pouvez pas jouer ce coup, la case est deja prise" << endl;
+            cout << "Vous ne pouvez pas jouer ce coup, la case est deja prise" << endl;
         }
 
     }
@@ -504,16 +509,16 @@ bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant) {
 }
 
 void finDePartie(Jeu *jeu){
-    cout << "La partie est finie !" << endl;
+    cout << "La partie est finie !" << endl << endl;
 
     if(jeu->joueur1->nbJetonsActuels > jeu->joueur2->nbJetonsActuels){
-        cout << jeu->joueur1->nom << " a gagne ! :)" << endl;
+        cout << jeu->joueur1->nom << " a gagne ! :)" << endl << endl;
     }
     else if(jeu->joueur2->nbJetonsActuels > jeu->joueur1->nbJetonsActuels){
-        cout << jeu->joueur2->nom << " a gagne ! :)" << endl;
+        cout << jeu->joueur2->nom << " a gagne ! :)" << endl << endl;
     }
     else if(jeu->joueur2->nbJetonsActuels == jeu->joueur1->nbJetonsActuels){
-        cout << jeu->joueur1->nom << " et " << jeu->joueur2->nom << " ont le meme nombre de points ! Ex aequo :)" << endl;
+        cout << jeu->joueur1->nom << " et " << jeu->joueur2->nom << " ont le meme nombre de points ! Ex aequo :)" << endl << endl;
     }
 
     cout << "SCORE : " << endl;
@@ -521,27 +526,144 @@ void finDePartie(Jeu *jeu){
     cout << jeu->joueur2->nom << " : " << jeu->joueur2->nbJetonsActuels << " jetons" << endl;
 }
 
+void regleDuJeu(){
+    cout << endl << "JEU DE REVERSI" << endl;
+    cout << "Vous allez devoir jouer tour a tour en posant un jeton sur le plateau de jeu : un joueur possede les jetons noirs 'N', l'autre les jetons blancs 'B'." << endl << "Les cases disponibles lors de votre tour sont indiquees par un point '.'." << endl << endl;
+}
+
 void PartieDeJeu(Jeu *jeu) {
+
     bool joueurCourant = true;
     int nbJetonsPoses = jeu->joueur1->nbJetonsActuels + jeu->joueur2->nbJetonsActuels;
-    // int nbToursLoupesConsecutifs = 0;
+    int nbToursLoupesConsecutifs = 0;
 
-    while (nbJetonsPoses<64) {
+
+    // jeu->tableauPointeurJetons[1][1]->couleur='B';
+    // // jeu->tableauPointeurJetons[1][2]->couleur='B';
+    // jeu->tableauPointeurJetons[1][3]->couleur='N';
+    // jeu->tableauPointeurJetons[1][4]->couleur='N';
+    // jeu->tableauPointeurJetons[1][5]->couleur='N';
+    // jeu->tableauPointeurJetons[1][6]->couleur='N';
+    // jeu->tableauPointeurJetons[1][7]->couleur='N';
+    // jeu->tableauPointeurJetons[1][8]->couleur='N';
+    // jeu->tableauPointeurJetons[2][1]->couleur='B';
+    // jeu->tableauPointeurJetons[2][2]->couleur='B';
+    // jeu->tableauPointeurJetons[2][3]->couleur='N';
+    // jeu->tableauPointeurJetons[2][4]->couleur='N';
+    // jeu->tableauPointeurJetons[2][5]->couleur='N';
+    // jeu->tableauPointeurJetons[2][6]->couleur='N';
+    // jeu->tableauPointeurJetons[2][7]->couleur='N';
+    // jeu->tableauPointeurJetons[2][8]->couleur='N';
+    // jeu->tableauPointeurJetons[3][1]->couleur='B';
+    // jeu->tableauPointeurJetons[3][2]->couleur='B';
+    // jeu->tableauPointeurJetons[3][3]->couleur='B';
+    // jeu->tableauPointeurJetons[3][4]->couleur='N';
+    // jeu->tableauPointeurJetons[3][5]->couleur='N';
+    // jeu->tableauPointeurJetons[3][6]->couleur='N';
+    // jeu->tableauPointeurJetons[3][7]->couleur='N';
+    // jeu->tableauPointeurJetons[3][8]->couleur='N';
+    // jeu->tableauPointeurJetons[4][1]->couleur='B';
+    // jeu->tableauPointeurJetons[4][2]->couleur='B';
+    // jeu->tableauPointeurJetons[4][3]->couleur='N';
+    // jeu->tableauPointeurJetons[4][4]->couleur='B';
+    // jeu->tableauPointeurJetons[4][5]->couleur='N';
+    // jeu->tableauPointeurJetons[4][6]->couleur='N';
+    // jeu->tableauPointeurJetons[4][7]->couleur='N';
+    // jeu->tableauPointeurJetons[4][8]->couleur='N';
+    // jeu->tableauPointeurJetons[5][1]->couleur='B';
+    // jeu->tableauPointeurJetons[5][2]->couleur='B';
+    // jeu->tableauPointeurJetons[5][3]->couleur='B';
+    // jeu->tableauPointeurJetons[5][4]->couleur='N';
+    // jeu->tableauPointeurJetons[5][5]->couleur='B';
+    // jeu->tableauPointeurJetons[5][6]->couleur='N';
+    // jeu->tableauPointeurJetons[5][7]->couleur='N';
+    // jeu->tableauPointeurJetons[5][8]->couleur='N';
+    // jeu->tableauPointeurJetons[6][1]->couleur='B';
+    // jeu->tableauPointeurJetons[6][2]->couleur='B';
+    // jeu->tableauPointeurJetons[6][3]->couleur='N';
+    // jeu->tableauPointeurJetons[6][4]->couleur='B';
+    // jeu->tableauPointeurJetons[6][5]->couleur='N';
+    // jeu->tableauPointeurJetons[6][6]->couleur='B';
+    // jeu->tableauPointeurJetons[6][7]->couleur='N';
+    // jeu->tableauPointeurJetons[6][8]->couleur='N';
+    // jeu->tableauPointeurJetons[7][1]->couleur='B';
+    // jeu->tableauPointeurJetons[7][2]->couleur='B';
+    // jeu->tableauPointeurJetons[7][3]->couleur='N';
+    // jeu->tableauPointeurJetons[7][4]->couleur='N';
+    // jeu->tableauPointeurJetons[7][5]->couleur='B';
+    // jeu->tableauPointeurJetons[7][6]->couleur='N';
+    // jeu->tableauPointeurJetons[7][7]->couleur='B';
+    // jeu->tableauPointeurJetons[7][8]->couleur='N';
+    // jeu->tableauPointeurJetons[8][1]->couleur='B';
+    // jeu->tableauPointeurJetons[8][2]->couleur='B';
+    // jeu->tableauPointeurJetons[8][3]->couleur='B';
+    // jeu->tableauPointeurJetons[8][4]->couleur='B';
+    // jeu->tableauPointeurJetons[8][5]->couleur='B';
+    // jeu->tableauPointeurJetons[8][6]->couleur='B';
+    // jeu->tableauPointeurJetons[8][7]->couleur='B';
+    // jeu->tableauPointeurJetons[8][8]->couleur='B';
+
+    // jeu->joueur1->nbJetonsActuels= 34;
+    // jeu->joueur2->nbJetonsActuels= 29;
+
+    // cout << "IL FAUT AFFICHER LE PLATEAU REMPLIE" << endl;
+    // affichePlateauJeu(jeu);
+
+    // jeu->tableauPointeurJetons[3][4]->couleur='N';
+    // jeu->tableauPointeurJetons[4][3]->couleur='N';
+    // jeu->tableauPointeurJetons[4][4]->couleur='N';
+    // jeu->tableauPointeurJetons[4][5]->couleur='N';
+    // jeu->tableauPointeurJetons[5][1]->couleur='N';
+    // jeu->tableauPointeurJetons[5][2]->couleur='N';
+    // jeu->tableauPointeurJetons[5][3]->couleur='N';
+    // jeu->tableauPointeurJetons[5][4]->couleur='N';
+    // jeu->tableauPointeurJetons[5][5]->couleur='N';
+    // jeu->tableauPointeurJetons[5][6]->couleur='N';
+    // jeu->tableauPointeurJetons[6][2]->couleur='N';
+    // jeu->tableauPointeurJetons[6][3]->couleur='N';
+    // jeu->tableauPointeurJetons[6][4]->couleur='N';
+    // jeu->tableauPointeurJetons[7][1]->couleur='B';
+    // jeu->tableauPointeurJetons[7][2]->couleur='B';
+    // jeu->tableauPointeurJetons[7][3]->couleur='N';
+    // jeu->tableauPointeurJetons[7][4]->couleur='N';
+    // jeu->tableauPointeurJetons[7][5]->couleur='N';
+    // jeu->tableauPointeurJetons[8][1]->couleur='B';
+    // jeu->tableauPointeurJetons[8][2]->couleur='B';
+    // jeu->tableauPointeurJetons[8][3]->couleur='B';
+    // jeu->tableauPointeurJetons[8][4]->couleur='N';
+
+    // jeu->joueur1->nbJetonsActuels= 17;
+    // jeu->joueur2->nbJetonsActuels= 5;
+
+    // cout << "IL FAUT AFFICHER LE PLATEAU REMPLIE" << endl;
+    // affichePlateauJeu(jeu);
+
+
+
+    while (nbJetonsPoses<64 && nbToursLoupesConsecutifs<2) {
         if(joueurCourant==true){
-            joueurCourant = jouerUnTour(jeu, jeu->joueur1, joueurCourant);
+            joueurCourant = jouerUnTour(jeu, jeu->joueur1, joueurCourant, &nbToursLoupesConsecutifs);
         }
         else{
-            joueurCourant = jouerUnTour(jeu, jeu->joueur2, joueurCourant);
+            joueurCourant = jouerUnTour(jeu, jeu->joueur2, joueurCourant, &nbToursLoupesConsecutifs);
         }
 
         nbJetonsPoses = jeu->joueur1->nbJetonsActuels + jeu->joueur2->nbJetonsActuels;
         
-        cout << endl << jeu->joueur1->nbJetonsActuels << endl;
-        cout << endl << jeu->joueur2->nbJetonsActuels << endl;
-        cout << endl << "jetons sur le plateau : " << nbJetonsPoses << endl << endl;
+        // cout << endl << jeu->joueur1->nbJetonsActuels << endl;
+        // cout << endl << jeu->joueur2->nbJetonsActuels << endl;
+        // cout << endl << "jetons sur le plateau : " << nbJetonsPoses << endl << endl;
 
-        // cout << endl << nbToursLoupesConsecutifs << endl;
+        // cout << endl << "NOMBRE DE TOURS CONSECUTIFS LOUPES " << nbToursLoupesConsecutifs << endl;
     }
+
+    affichePlateauJeu(jeu);
+
+    if(nbToursLoupesConsecutifs==2){
+        cout << "Plus aucun joueur ne peut poser de jeton " << endl << endl;
+    }
+
+    // cout << nbJetonsPoses;
 
     finDePartie(jeu);
 
@@ -565,7 +687,7 @@ bool casesDisposTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char c
 
                     if(PoseJetonPossibleOuPas == true){
                         
-                        cout << "IL FAUT MODIFIER LA COULEUR DE LA CASE " << i << j << endl;
+                        // cout << "IL FAUT MODIFIER LA COULEUR DE LA CASE " << i << j << endl;
                         jeu->tableauPointeurJetons[i][j]->couleur='.';
 
                         // cout << i << " ; " << j << endl;

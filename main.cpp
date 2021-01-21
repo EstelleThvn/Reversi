@@ -5,6 +5,8 @@ using namespace std;
 
 int main() {
 
+    regleDuJeu();
+
     Joueur* joueur1 = (Joueur*)malloc(25*sizeof(char) + 2*sizeof(int));
     Joueur* joueur2 = (Joueur*)malloc(25*sizeof(char) + 2*sizeof(int));
     

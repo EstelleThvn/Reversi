@@ -28,11 +28,12 @@ bool possibleJouerTourCaseDispo(Jeu *jeu, Joueur *joueur, int rowNewJeton, int c
 bool possibleJouerTourCondition1(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, int rowNewJeton, int columnNewJeton);
 int getLigne();
 int getColonne();
-bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant);
+bool jouerUnTour(Jeu *jeu, Joueur *joueur, bool joueurCourant, int* nbToursLoupesConsecutifs);
 void PartieDeJeu(Jeu *jeu);
 bool possibleJouerTourCondition2(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, int rowNewJeton, int columnNewJeton);
 void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, int rowNewJeton, int columnNewJeton, bool joueurCourant);
 void finDePartie(Jeu *jeu);
 bool casesDisposTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, bool joueurCourant);
+void regleDuJeu();
 
 #endif /* FONCTIONS_H */
