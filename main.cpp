@@ -1,6 +1,9 @@
 #include <iostream>
 using namespace std;
-#include "fonctions.h"
+#include "main.h"
+#include "initetaffichage.h"
+#include "partie.h"
+#include "tour.h"
 
 
 int main() {
@@ -18,9 +21,13 @@ int main() {
     afficheJoueur(joueur2);
 
     initialiseJeu(plateauJeuTest, joueur1, joueur2);
-    affichePlateauJeu(plateauJeuTest);
+    // affichePlateauJeu(plateauJeuTest);
 
     PartieDeJeu(plateauJeuTest);
+
+    free(joueur1);
+    free(joueur2);
+    free(plateauJeuTest);
 
     return 0;
 }
