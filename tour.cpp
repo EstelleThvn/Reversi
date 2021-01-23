@@ -418,8 +418,6 @@ void capturePionsAdverses(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, c
 
 
 
-
-
 // indique la position des jetons qui sont jouables par le joueur lors de son tour, si c'est possible
 bool casesDisposTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char couleurJoueur, bool joueurCourant){
 
@@ -442,7 +440,6 @@ bool casesDisposTour(Jeu *jeu, Joueur *joueur, char couleurJoueurAdverse, char c
                         jeu->tableauPointeurJetons[i][j]->couleur='.';
 
                         // cout << i << " ; " << j << endl;
-
 
                         CaseDispoExiste = true;
                     }

@@ -15,10 +15,12 @@ void initialiseJoueur(Joueur *joueur, int n) {
     joueur->nbJetonsActuels = 2;
 }
 
+
 //affiche le nom et le nombre de jetons sur le plateau d'un joueur
 void afficheJoueur(Joueur *joueur) {
     cout << joueur->nom << " possede " << joueur->nbJetonsActuels << " jetons " << endl << endl;
 }
+
 
 //initialise le jeu
 void initialiseJeu(Jeu *jeu, Joueur *joueur1, Joueur *joueur2) {

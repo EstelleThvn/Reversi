@@ -21,7 +21,6 @@ int main() {
     afficheJoueur(joueur2);
 
     initialiseJeu(plateauJeuTest, joueur1, joueur2);
-    // affichePlateauJeu(plateauJeuTest);
 
     PartieDeJeu(plateauJeuTest);
 

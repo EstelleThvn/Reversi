@@ -139,6 +139,7 @@ void PartieDeJeu(Jeu *jeu) {
 
 }
 
+
 //annonce la fin de la partie et le vainqueur
 void finDePartie(Jeu *jeu){
     cout << "La partie est finie !" << endl << endl;
